@@ -1,0 +1,68 @@
+<player-head [isLeader]="leader.isLeader" [playerLogin]="leader.login"></player-head>
+
+<app-modal *ngIf="deletedMember !== null" [confirmMsg]="confirmMsg" (notify)='onConfirmDelete($event)'></app-modal>
+
+<div class="row container" *ngIf="successMessage != null || errorMessage != null">
+    <div class="col s12">
+        <div *ngIf="successMessage != null" class="card green lighten-5">
+            <div class="card-content green-text">
+                <p>{{successMessage}} <span (click)="closeSuccess()" class="right close-ico">x</span></p>
+            </div>
+        </div>
+        <div class="card red lighten-4">
+            <div *ngIf="errorMessage != null" class="card-content red-text">
+                <p>{{errorMessage}} <span (click)="closeError()" class="right close-ico">x</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<add-member (addMemberForm)="addMember($event)"></add-member>
+
+<div class="row container">
+    <div class="col s12 center-align">
+        <h3>{{'Members of'|translate}} {{ leader.alliance }}</h3>
+    </div>
+</div>
+<div class="row container">
+    <div class="row col s12 valign-wrapper">
+
+        <table class="bordered striped centered">
+            <thead>
+            <tr>
+                <div class="valign-wrapper">
+                    <th class="col s3">{{'Login'|translate}}</th>
+                    <th class="col s3">E-mail</th>
+                    <th class="col s3">{{'Leader'|translate}}</th>
+                    <th class="col s3">{{'Action'|translate}}</th>
+                </div>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let member of users">
+                <div *ngIf="member !== selectedMember" class="valign-wrapper"
+                     (dblclick)="selectMember(member)">
+                    <td class="col s3">{{ member.login }}</td>
+                    <td class="col s3">{{ member.email }}</td>
+                    <td class="col s3">
+                        <i *ngIf="member.isLeader" class="material-icons">done</i>
+                        <span *ngIf="!member.isLeader">-</span>
+                    </td>
+                    <td class="col s3">
+                        <button (click)="selectMember(member)" class="waves-effect waves-light btn edit" title="{{'Edit'|translate}}">
+                            <i class="material-icons">mode_edit</i>
+                        </button>
+
+                        <button class="waves-effect waves-light btn delete" (click)="deleteMember(member)" title="{{'Delete'|translate}}">
+                            <i class="material-icons">delete</i>
+                        </button>
+                    </td>
+                </div>
+                <edit-member *ngIf="member === selectedMember" [editedMember]="selectedMember" [isCurrentPlayer]="selectedMember.login === leader.login"
+                             (editMemberForm)="updateMember($event)"></edit-member>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>

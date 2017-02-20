@@ -1,0 +1,41 @@
+<div (keyup.escape)="cancelEditing()" class="record">
+    <form [formGroup]="memberForm" (ngSubmit)="updateMember(memberForm.value)" class="valign-wrapper">
+        <td class="col s3">
+            <div>
+                <input type="text" name="login" id="editLogin" class="validate"
+                       [formControl]="memberForm.controls['login']" autofocus/>
+                <div class="red lighten-3"
+                     *ngIf="!memberForm.controls['login'].valid && memberForm.controls['login'].touched">{{LOGIN_ERROR}}
+                </div>
+            </div>
+        </td>
+        <td class="col s3">
+            <div>
+                <input type="text" name="email" id="editEmail" class="validate"
+                       [formControl]="memberForm.controls['email']"/>
+                <div class="red lighten-3"
+                     *ngIf="!memberForm.controls['email'].valid && memberForm.controls['email'].touched">
+                    {{EMAIL_ERROR}}
+                </div>
+            </div>
+        </td>
+        <td class="col s3">
+            <div>
+                <input *ngIf="!isCurrentPlayer" type="checkbox" class="messageCheckbox" id="editIsLeader"
+                       [formControl]="memberForm.controls['isLeader']"
+                       name="isLeader"/>
+                <label *ngIf="!isCurrentPlayer" for="editIsLeader">Leader</label>
+                <i *ngIf="isCurrentPlayer" class="material-icons">done</i>
+            </div>
+        </td>
+        <td class="col s3">
+            <button class="waves-effect waves-light btn edit" [disabled]="!memberForm.valid" type="submit" title="{{'Save'|translate}}">
+                <i class="material-icons">play_arrow</i>
+            </button>
+            <button class="waves-effect waves-light btn delete" type="button" (click)="cancelEditing()" title="{{'Abort'|translate}}">
+                <i class="material-icons">stop</i>
+            </button>
+        </td>
+    </form>
+</div>
+

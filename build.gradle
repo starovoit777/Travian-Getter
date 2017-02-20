@@ -1,0 +1,164 @@
+group 'ua.cv.tim'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'org.akhikhl.gretty'
+apply plugin: "org.sonarqube"
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2.1"
+    }
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.akhikhl.gretty:gretty:1.4.0'
+    }
+}
+
+gretty {
+    port = 8080
+    contextPath = 'travian'
+    servletContainer = 'jetty9'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url "https://clojars.org/repo" }
+}
+
+ext.vers = [
+        hibernate      : '5.2.5.Final',
+        postgresql     : '9.3-1102.jdbc41',
+        spring         : '4.3.5.RELEASE',
+        spring_security: '4.2.0.RELEASE',
+        servlet        : '3.1.0',
+        jstl           : '1.2',
+        mail           : '1.4',
+        jackson_core   : '2.8.4',
+        slf4j_bridge   : '1.7.21',
+        logback        : '1.1.7',
+        testng         : '6.9.13.6',
+        mockito        : '2.3.5'
+]
+
+dependencies {
+    compile group: 'org.hibernate', name: 'hibernate-core', version: vers.hibernate
+    compile group: 'postgresql', name: 'postgresql', version: vers.postgresql
+    compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: vers.hibernate
+
+
+    compile group: 'org.springframework', name: 'spring-core', version: vers.spring
+    compile group: 'org.springframework', name: 'spring-web', version: vers.spring
+    compile group: 'org.springframework', name: 'spring-webmvc', version: vers.spring
+    compile group: 'org.springframework', name: 'spring-tx', version: vers.spring
+    compile group: 'org.springframework', name: 'spring-orm', version: vers.spring
+    compile group: 'org.springframework', name: 'spring-test', version: vers.spring
+
+    compile group: 'org.springframework', name: 'spring-messaging', version: vers.spring
+    compile group: 'org.springframework', name: 'spring-websocket', version: vers.spring
+
+    compile group: 'org.springframework.security', name: 'spring-security-web', version: vers.spring_security
+    compile group: 'org.springframework.security', name: 'spring-security-config', version: vers.spring_security
+    compile group: 'org.springframework.security', name: 'spring-security-taglibs', version: vers.spring_security
+
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: vers.servlet
+    compile group: 'javax.servlet', name: 'jstl', version: vers.jstl
+    compile group: 'javax.mail', name: 'mail', version: vers.mail
+
+    compile group: 'javax.validation', name: 'validation-api', version: '1.1.0.Final'
+    compile group: 'org.hibernate', name: 'hibernate-validator', version: '5.1.3.Final'
+
+    compile group: 'org.skyscreamer', name: 'jsonassert', version: '0.9.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: vers.jackson_core
+
+    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: vers.slf4j_bridge
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: vers.logback
+
+    testCompile group: 'org.testng', name: 'testng', version: vers.testng
+    testCompile group: 'org.mockito', name: 'mockito-core', version: vers.mockito
+    testCompile 'com.jayway.jsonpath:json-path:2.2.0'
+
+    compile group: 'org.seleniumhq.selenium', name: 'htmlunit-driver', version: '2.23.2'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.0.1'
+
+    compile group: 'org.springframework.security', name: 'spring-security-test', version: '4.2.1.RELEASE'
+
+
+}
+
+configurations.all {
+    exclude group: "commons-logging", module: "commons-logging"
+}
+
+
+task npm_install(type:Exec) {
+    workingDir 'src/main/webapp'
+    commandLine 'cmd', '/c', 'npm', 'install'
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+task npmRunTsc(type:Exec) {
+    workingDir 'src/main/webapp'
+    commandLine 'cmd', '/c', 'npm', 'run', 'tsc'
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+
+task runApp(type:Exec) {
+    workingDir './'
+    commandLine 'cmd', '/c', 'gradle', 'npm_install', 'npmRunTsc', 'appStart'
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+task buildApp(type:Exec) {
+    workingDir './'
+    commandLine 'cmd', '/c', 'gradle', 'npm_install', 'npmRunTsc', 'build'
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+test {
+    useTestNG()
+    systemProperty 'some.prop', 'value'
+    testLogging.showStandardStreams = true
+    minHeapSize = "128m"
+    maxHeapSize = "512m"
+    jvmArgs '-XX:MaxPermSize=256m'
+
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
+
+    onOutput { descriptor, event ->
+        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
+    }
+}
+
+war {
+    archiveName = 'travian.war'
+}

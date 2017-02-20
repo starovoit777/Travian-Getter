@@ -1,0 +1,47 @@
+<player-head [isLeader]="leader.isLeader" [playerLogin]="leader.login"></player-head>
+<div class="row container" >
+    <div class="col s12">
+        <h3 class="center-align">{{'Attacks Archive'|translate}}</h3>
+        <table class="highlight">
+            <thead>
+            <tr>
+                <th class="col s4 offset-s4 center-align"><div>{{'Date'|translate}}</div></th>
+            </tr>
+            </thead>
+            <tbody>
+            <ng-container *ngFor="let at of attacks">
+                <tr (click)="getById(at)" style="cursor: pointer;" >
+                    <td class="col s4 offset-s4 center-align"><div>{{at.date}}</div>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td *ngIf="currentAttack == at">
+                        <table class="highlight" *ngIf="result != null">
+
+                            <thead>
+                            <tr>
+                                <th class="col s3"><div>{{'PlayerName'|translate}}</div></th>
+                                <th class="col s3"><div>{{'VillageCoord'|translate}}</div></th>
+                                <th class="col s3"><div>{{'Enemy'|translate}}</div></th>
+                                <th class="col s3"><div>{{'Time of attack'|translate}}</div></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let at of result">
+                                <td class="col s3"><div>{{at.playerName}}</div></td>
+                                <td class="col s3"><div>{{at.villageName}}</div></td>
+                                <td class="col s3"><div>{{at.enemy}}</div></td>
+                                <td class="col s3"><div>{{at.attackTime}}</div></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div *ngIf="result == null">{{'No attacks'|translate}}</div>
+                    </td>
+                </tr>
+            </ng-container>
+            </tbody>
+        </table>
+        <br>
+    </div>
+</div>

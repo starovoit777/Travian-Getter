@@ -1,0 +1,27 @@
+#note {
+    position: absolute;
+    width: 30%;
+    height: 60px;
+    z-index: 101;
+    top: 70px;
+    font-size: 18px;
+
+    right: 10px;
+    color: #fff;
+    background: #fd5c68;
+    line-height: 2.5;
+    -webkit-box-shadow: 0 0 5px black;
+    -moz-box-shadow: 0 0 5px black;
+    box-shadow: 0 0 5px black;
+    padding: 10px;
+}
+
+@media screen and (max-width: 1000px) {
+    li{
+        border-bottom: solid 1px #b7b8b4;
+    }
+    .dropdown-content li{
+        color: inherit;
+    }
+}
+
