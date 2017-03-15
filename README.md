@@ -10,10 +10,6 @@ Java 8,
 Gradle 3.2,
 PostgreSQL
 ```
-## Installation:
-```
-git clone https://github.com/nromanen/Ch-046.git
-```
 Create DB named "travian",
 Check if the username, password and port for DB in src/main/resources/hibernate.properties are correct.
 Restore DB travian using file src/main/resources/travian_dump.sql
